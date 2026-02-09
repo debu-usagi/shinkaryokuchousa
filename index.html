@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1, user-scalable=no">
+    <title>新！！！火力調査！！！ランキング！！！</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container py-5" style="max-width: 540px;">
+        <div class="row">
+            <div class="col">
+                <div class="card" style="height: 540px;">
+                    <div class="card-header">
+                        <h2>火力ランキング</h2>
+                        <p>敵の属性を選択するとそれに応じた火力のランキングが表示されます。</p>
+                        <p><a href="https://forms.gle/kSYuZABv3GMVeUEn9" target="_blank"
+                                rel="noopener noreferrer">入力はこちら</a></p>
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <template id="template-nav-item">
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" role="tab" data-bs-toggle="tab"></a>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                    <div class="card-body" style="overflow-y: auto;">
+                        <div class="tab-content">
+                            <template id="template-tab-pane">
+                                <div class="tab-pane fade" role="tabpanel">
+                                    <div class="table-responsive" style="font-size: 10px;">
+                                        <table class="table table-striped table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>順位</th>
+                                                    <th>名前</th>
+                                                    <th>プレイヤー属性</th>
+                                                    <th class="th-canpublish">公表の可否</th>
+                                                    <th>ダメージ値</th>
+                                                    <th>更新日時</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template class="template-tr">
+                                                    <tr>
+                                                        <td class="td-rank"></td>
+                                                        <td class="td-name"></td>
+                                                        <td class="td-element"></td>
+                                                        <td class="td-canpublish"></td>
+                                                        <td class="td-damage"></td>
+                                                        <td class="td-timestamp"></td>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        {
+            const res = await fetch("https://script.google.com/macros/s/AKfycbxlJPVYCsDEvs6iqOwntQFKzJdqFvMDZzCnGHBPDkbInnymSQJ5L2Gis0Bt7uijx6RZ/exec");
+            const data = await res.json();
+            const tempNavItem = document.getElementById("template-nav-item");
+            const tempTabPane = document.getElementById("template-tab-pane");
+            for (const [i, e] of ["火", "水", "木", "光", "闇"].entries()) {
+                const navItem = tempNavItem.content.firstElementChild.cloneNode(true);
+                const navLink = navItem.querySelector(".nav-link");
+                navLink.href = "#tab-" + i;
+                navLink.innerText = e;
+                if (i === 0) navLink.classList.add("active");
+                tempNavItem.parentNode.appendChild(navItem);
+                const pane = tempTabPane.content.firstElementChild.cloneNode(true);
+                pane.id = "tab-" + i;
+                if (i === 0) pane.classList.add("active", "show");
+                const thCanPublish = pane.querySelector(".th-canpublish");
+                if (data.public) thCanPublish.style.display = "none";
+                const tempTr = pane.querySelector(".template-tr");
+                const rows = data.rankTable?.[e] ?? [];
+                for (const [r, row] of rows.entries()) {
+                    const tr = tempTr.content.firstElementChild.cloneNode(true);
+                    tr.querySelector(".td-rank").innerText = String(r + 1);
+                    tr.querySelector(".td-name").innerText = row.name;
+                    tr.querySelector(".td-element").innerText = row.playerElement;
+                    const tdCan = tr.querySelector(".td-canpublish");
+                    tdCan.innerText = row.canPublish ? "はい" : "いいえ";
+                    if (data.public) tdCan.style.display = "none";
+                    tr.querySelector(".td-damage").innerText = row.damage;
+                    const tdTs = tr.querySelector(".td-timestamp");
+                    tdTs.innerText = new Date(row.timestamp).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+                    const age = Date.now() - row.timestamp;
+                    if (age > 62 * 24 * 60 * 60 * 1000) tdTs.style.color = "var(--bs-danger)";
+                    else if (age > 31 * 24 * 60 * 60 * 1000) tdTs.style.color = "var(--bs-warning)";
+                    tempTr.appendChild(tr);
+                }
+                tempTr.remove();
+                tempTabPane.parentNode.appendChild(pane);
+            }
+            tempNavItem.remove();
+            tempTabPane.remove();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
