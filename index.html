@@ -99,7 +99,7 @@
                     const age = Date.now() - row.timestamp;
                     if (age > 62 * 24 * 60 * 60 * 1000) tdTs.style.color = "var(--bs-danger)";
                     else if (age > 31 * 24 * 60 * 60 * 1000) tdTs.style.color = "var(--bs-warning)";
-                    tempTr.appendChild(tr);
+                    tempTr.parentNode.appendChild(tr);
                 }
                 tempTr.remove();
                 tempTabPane.parentNode.appendChild(pane);
