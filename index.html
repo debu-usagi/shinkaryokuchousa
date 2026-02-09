@@ -67,7 +67,7 @@
     </div>
     <script type="module">
         {
-            const res = await fetch("https://script.google.com/macros/s/AKfycbxlJPVYCsDEvs6iqOwntQFKzJdqFvMDZzCnGHBPDkbInnymSQJ5L2Gis0Bt7uijx6RZ/exec");
+            const res = await fetch("https://script.google.com/macros/s/AKfycbxlJPVYCsDEvs6iqOwntQFKzJdqFvMDZzCnGHBPDkbInnymSQJ5L2Gis0Bt7uijx6RZ/exec" + location.search);
             const data = await res.json();
             const tempNavItem = document.getElementById("template-nav-item");
             const tempTabPane = document.getElementById("template-tab-pane");
